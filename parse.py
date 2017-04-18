@@ -34,9 +34,9 @@ for node in e.findall('node'):
 
             if place_filter != None:
                 if place_filter == name:
-                    print("%s,%s" % (lat, lng) )
+                    print("%s,%s,%s" % (name, lat, lng) )
             else:
-                print("%s,%s)" % (lat, lng) )
+                print("%s,%s,%s)" % (name, lat, lng) )
 
 for way in e.findall('way'):
     thisWayNodeList = []
@@ -61,7 +61,7 @@ for way in e.findall('way'):
                             lat = node.get('lat')
                             lng = node.get('lon')
 
-                    print( "%s,%s" % (lat, lng) )
+                    print( "%s,%s,%s" % (thisWayName,lat, lng) )
             else:
                 # Get all reference nodes coordinates
                 for node in e.findall('node'):
@@ -69,4 +69,4 @@ for way in e.findall('way'):
                         lat = node.get('lat')
                         lng = node.get('lon')
 
-                print( "%s,%s" % (lat, lng) )
+                print( "%s,%s,%s" % (thisWayName,lat, lng) )
