@@ -11,7 +11,16 @@ $ echo $JAVA_HOME
 You also need osmosis to do the heavy lifting of converting binary .pbf files to extracted XML. Osmosis can be found here .
 
 HOWTO
-Step 1: Extract
+Step 1: Update
+Get the pbf files required.
+
+chmod +x ./update.sh
+./update.sh
+
+
+This will proceed to check MD5 hashes between the known sources, and the local copy. If they match, no update is required. If they don’t match, the pbf file is downloaded.
+
+Step 2: Extract
 The ./extract.sh file can be made +x:
 
 chmod +x ./extract.sh
@@ -19,17 +28,17 @@ chmod +x ./extract.sh
 
 Then, perform the parsing with the following format:
 
-extract.sh <filename>.osm.pbf <location> <amenity>
+extract.sh -f <filename> -l <location> -a <amenity>
 
 
 Ex:
 
-extract.sh manitoba-latest.osm.pbf Manitoba restaurant
+extract.sh -f ./pbf/manitoba-latest.osm.pbf -l Manitoba -a restaurant
 
 
 You’ll then receive a <location>-<amenity>-all.osm file!
 
-Step 2: Parse
+Step 3: Parse
 The included ./parse.py can also be made +x:
 
 chmod +x ./parse.py
@@ -37,16 +46,19 @@ chmod +x ./parse.py
 
 Then, perform the parsing with the following format:
 
-parse.py <filename>.osm
+parse.py <filename>.osm "[filter]"
 
 
 Eg:
 
-parse.py Manitoba-restaurant-all.opm
+parse.py ./Manitoba-restaurant-all.opm
+
+or
+
+parse.py ./Manitoba-restaurant-all.opm "McDonald's"
 
 
-The parse.py file currently lists all Nodes effectively; extracting name, latitude, and longitude coordinates. Still working on Way types; we can, at least, list their names.
+The parse.py file currently lists all Nodes effectively; extracting name, latitude, and longitude coordinates. Way types are dealt with separately; first by also ensuring the reference nodes are collected, and then compared with the first Way node. While this will generate a point which is not located in the centre of that item, it will at least define the starting place, and be pretty darn close.
 
 TODO:
-* Extracting WAY nd values and getting their coordinates.
 * Error handling
