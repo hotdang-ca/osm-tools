@@ -6,9 +6,32 @@
 import sys
 import os
 import xml.etree.ElementTree
+import requests
+import time
+import json
 
+url = "http://sample-env-2.diiqepxzgm.us-east-1.elasticbeanstalk.com/dynamodb-geo"
 file_name = None
 place_filter = None
+
+
+def send_point(name, lat, lng):
+    print "Sending data %s, %s, %s" % (name, lat, lng)
+    data = {
+        'action': 'put-point',
+	    'request': {
+            'lat': lat,
+            'lng': lng,
+            'locationName': name
+        }
+	}
+
+    r = requests.post(url, json=data)
+    print r.headers
+    print ( "Response is %s, %s" % (r.status_code, r.text) )
+    # time.sleep(1)
+
+    return
 
 if len(sys.argv) == 1:
     print "Not enough arguments. Specify the filename, and optional filter."
@@ -34,9 +57,11 @@ for node in e.findall('node'):
 
             if place_filter != None:
                 if place_filter == name:
-                    print("%s,%s,%s" % (name, lat, lng) )
+                    send_point(name, lat, lng)
+                    # print("%s,%s,%s" % (name, lat, lng) )
             else:
-                print("%s,%s,%s)" % (name, lat, lng) )
+                send_point(name, lat, lng)
+                # print("%s,%s,%s" % (name, lat, lng) )
 
 for way in e.findall('way'):
     thisWayNodeList = []
@@ -61,7 +86,8 @@ for way in e.findall('way'):
                             lat = node.get('lat')
                             lng = node.get('lon')
 
-                    print( "%s,%s,%s" % (thisWayName,lat, lng) )
+                    send_point(thisWayName, lat, lng)
+                    # print( "%s,%s,%s" % (thisWayName,lat, lng) )
             else:
                 # Get all reference nodes coordinates
                 for node in e.findall('node'):
@@ -69,4 +95,5 @@ for way in e.findall('way'):
                         lat = node.get('lat')
                         lng = node.get('lon')
 
-                print( "%s,%s,%s" % (thisWayName,lat, lng) )
+                send_point(thisWayName, lat, lng)
+                # print( "%s,%s,%s" % (thisWayName,lat, lng) )
